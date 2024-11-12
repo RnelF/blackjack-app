@@ -1,4 +1,4 @@
-import { ICard } from "../types/types";
+import { ICard } from "./types";
 import PromptSync from "prompt-sync";
 const prompt = PromptSync();
 

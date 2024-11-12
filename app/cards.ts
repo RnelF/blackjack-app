@@ -1,4 +1,4 @@
-import { ICard, Suit } from "../types/types";
+import { ICard, Suit } from "./types";
 
 class Card implements ICard {
   static readonly CARD_VALUES: Record<number, string> = {
