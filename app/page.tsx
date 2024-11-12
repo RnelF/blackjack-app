@@ -77,18 +77,54 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-4 items-center justify-center">
       <div>
         <h1>Blackjack</h1>
-        <button onClick={() => setDeck(new Deck())}>Reset</button>
+        <button
+          onClick={() => {
+            setDeck(new Deck());
+            setPlayerHand([]);
+            setDealerHand([]);
+          }}
+        >
+          Reset
+        </button>
       </div>
       <div>
         <div>{JSON.stringify(playerHand)}</div>
         <div>{JSON.stringify(dealerHand)}</div>
       </div>
       <div>
+        <div>{playerHandDisplay}</div>
+        <div>{dealerHandDisplay}</div>
+      </div>
+      <div>
+        <button
+          onClick={() => {
+            setDecision("hit");
+            playerTurn(playerHand, deck);
+            dealerTurn(dealerHand, deck);
+          }}
+        >
+          Hit
+        </button>
+        <button
+          onClick={() => {
+            setDecision("stand");
+            playerTurn(playerHand, deck);
+            dealerTurn(dealerHand, deck);
+          }}
+        >
+          Stand
+        </button>
+      </div>
+      <div>
         <input type="number" onChange={handleInputBet} value={bet} />{" "}
         <button onClick={handleSubmitBet}>Place Bet</button>
+        <div>{bet}</div>
+        <div>
+          <p>Current Balance: {balance}</p>
+        </div>
       </div>
     </div>
   );
