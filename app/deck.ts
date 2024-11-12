@@ -1,5 +1,5 @@
 import { IDealable, Suit } from "./types";
-import Card from "./card";
+import Card from "./cards";
 import { shuffleArray } from "./utils";
 
 class Deck implements IDealable {
