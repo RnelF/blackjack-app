@@ -1,14 +1,4 @@
 import { ICard } from "./types";
-import PromptSync from "prompt-sync";
-const prompt = PromptSync();
-
-export function getDecision(): "hit" | "stand" {
-  while (true) {
-    const decision = prompt("Your action: (hit/stand): ").toLocaleLowerCase();
-
-    if (decision === "stand" || decision === "hit") return decision;
-  }
-}
 
 export function getHandValue(cards: ICard[]): number {
   let value = 0;

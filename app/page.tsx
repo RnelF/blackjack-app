@@ -2,16 +2,18 @@
 import Deck from "./deck";
 import { ICard } from "./types";
 import { getHandValue, getStrHand } from "./utils";
-import { use, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
   const [decision, setDecision] = useState("");
-  const [playerHand, setPlayerHand] = useState([]);
+  const [playerHand, setPlayerHand] = useState<ICard[]>([]);
   const [playerHandDisplay, setPlayerHandDisplay] = useState("");
-  const [dealerHand, setDealerHand] = useState([]);
+  const [dealerHand, setDealerHand] = useState<ICard[]>([]);
   const [dealerHandDisplay, setDealerHandDisplay] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
+  const [bet, setBet] = useState("");
+  const [deck, setDeck] = useState(new Deck());
 
   function playerTurn(playerHand: ICard[], deck: Deck) {
     let handValue = getHandValue(playerHand);
@@ -36,6 +38,16 @@ export default function Home() {
     }
   }
 
+  function dealPlayer(playerHand: ICard[], deck: Deck) {
+    playerHand = deck.deal(2);
+    setPlayerHand(playerHand);
+  }
+
+  function dealDealer(dealerHand: ICard[], deck: Deck) {
+    dealerHand = deck.deal(2);
+    setDealerHand(dealerHand);
+  }
+
   function dealerTurn(dealerHand: ICard[], deck: Deck) {
     let handValue = getHandValue(dealerHand);
 
@@ -49,18 +61,34 @@ export default function Home() {
     }
   }
 
+  function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
+    setBet(event.target.value);
+  }
+
+  function handleSubmitBet() {
+    if (parseInt(bet) > balance) {
+      setBet("Insufficient Balance");
+    } else if (parseInt(bet) <= 0) {
+      setBet("Invalid Bet!");
+    } else {
+      dealDealer(playerHand, deck);
+      dealPlayer(dealerHand, deck);
+    }
+  }
+
   return (
     <div>
       <div>
         <h1>Blackjack</h1>
-        <button onClick={() => new Deck()}>Reset</button>
+        <button onClick={() => setDeck(new Deck())}>Reset</button>
       </div>
       <div>
-        <div>{playerHand}</div>
-        <div>{dealerHand}</div>
+        <div>{JSON.stringify(playerHand)}</div>
+        <div>{JSON.stringify(dealerHand)}</div>
       </div>
       <div>
-        <input type="number" />
+        <input type="number" onChange={handleInputBet} value={bet} />{" "}
+        <button onClick={handleSubmitBet}>Place Bet</button>
       </div>
     </div>
   );
