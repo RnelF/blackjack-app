@@ -24,33 +24,18 @@ export default function Home() {
     if (decision === "hit") {
       playerHand.push(deck.deal(1)[0]);
       handValue = getHandValue(playerHand);
-      setPlayerHandDisplay(
-        `Your hand: ${getStrHand(playerHand)} (Total: ${handValue})`
-      );
+      setPlayerHand(playerHand);
     } else if (decision === "stand") {
-      setPlayerHandDisplay(
-        `Your hand: ${getStrHand(playerHand)} (Total: ${handValue})`
-      );
+      setPlayerHand(playerHand);
       if (handValue > finalDealerHand) {
         setBalance(balance + bet * 2);
         setGameDecision("You Win!");
-        setDeck(new Deck());
-        setPlayerHand([]);
-        setDealerHand([]);
-        setBet(0);
       } else if (handValue < finalDealerHand) {
         setGameDecision("You Lose!");
-        setDeck(new Deck());
-        setPlayerHand([]);
-        setDealerHand([]);
-        setBet(0);
       } else if (handValue === finalDealerHand) {
         setGameDecision("Push! / Tie!");
-        setDeck(new Deck());
-        setPlayerHand([]);
-        setDealerHand([]);
-        setBet(0);
       }
+      resetGame();
     }
 
     if (handValue > 21) {
@@ -59,6 +44,7 @@ export default function Home() {
       );
       setBalance(balance - bet);
       setBust(true);
+      resetGame();
     }
   }
 
@@ -70,10 +56,7 @@ export default function Home() {
     if (handValue === 21) {
       setBalance(bet * 2.5);
       setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
-      setDeck(new Deck());
-      setPlayerHand([]);
-      setDealerHand([]);
-      setBet(0);
+      resetGame();
     }
   }
 
@@ -83,26 +66,17 @@ export default function Home() {
     setDealerHand(dealerHand);
     playerTurn(dealerHand, deck);
     if (handValue === 21) {
-      setBalance(balance - bet);
       setGameDecision(`Dealer has Blackjack! you Lost`);
-      setDeck(new Deck());
-      setPlayerHand([]);
-      setDealerHand([]);
-      setBet(0);
+      resetGame();
     }
   }
 
   function dealerTurn(dealerHand: ICard[], deck: Deck) {
     let handValue = getHandValue(dealerHand);
 
-    if (handValue >= 17) {
-      setDealerHandDisplay(
-        `Dealer's hand: ${getStrHand(dealerHand)} (Total: ${handValue})`
-      );
-    } else {
+    if (handValue < 17) {
       dealerHand.push(deck.deal(1)[0]);
-      handValue = getHandValue(dealerHand);
-      setFinalDealerHand(handValue);
+      setFinalDealerHand(getHandValue(dealerHand));
     }
   }
 
@@ -118,9 +92,18 @@ export default function Home() {
     } else if (bet <= 0) {
       setBetError("Invalid Bet!");
     } else {
+      setBalance(balance - bet);
       dealDealer(playerHand, deck);
       dealPlayer(dealerHand, deck);
     }
+  }
+
+  function resetGame() {
+    setDeck(new Deck());
+    setPlayerHand([]);
+    setDealerHand([]);
+    setBet(0);
+    setDecision("");
   }
 
   return (
