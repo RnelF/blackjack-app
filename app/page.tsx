@@ -9,10 +9,13 @@ export default function Home() {
   const [playerHand, setPlayerHand] = useState<ICard[]>([]);
   const [playerHandDisplay, setPlayerHandDisplay] = useState("");
   const [dealerHand, setDealerHand] = useState<ICard[]>([]);
+  const [finalDealerHand, setFinalDealerHand] = useState<number>(0);
   const [dealerHandDisplay, setDealerHandDisplay] = useState("");
+  const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
-  const [bet, setBet] = useState("");
+  const [bet, setBet] = useState<number>(0);
+  const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
   function playerTurn(playerHand: ICard[], deck: Deck) {
@@ -24,28 +27,69 @@ export default function Home() {
       setPlayerHandDisplay(
         `Your hand: ${getStrHand(playerHand)} (Total: ${handValue})`
       );
-    } else {
+    } else if (decision === "stand") {
       setPlayerHandDisplay(
         `Your hand: ${getStrHand(playerHand)} (Total: ${handValue})`
       );
+      if (handValue > finalDealerHand) {
+        setBalance(balance + bet * 2);
+        setGameDecision("You Win!");
+        setDeck(new Deck());
+        setPlayerHand([]);
+        setDealerHand([]);
+        setBet(0);
+      } else if (handValue < finalDealerHand) {
+        setGameDecision("You Lose!");
+        setDeck(new Deck());
+        setPlayerHand([]);
+        setDealerHand([]);
+        setBet(0);
+      } else if (handValue === finalDealerHand) {
+        setGameDecision("Push! / Tie!");
+        setDeck(new Deck());
+        setPlayerHand([]);
+        setDealerHand([]);
+        setBet(0);
+      }
     }
 
     if (handValue > 21) {
-      setPlayerHandDisplay(
-        "`Your hand: ${getStrHand(playerHand)} (Total: ${handValue}) \n Busted!"
+      setGameDecision(
+        `Your hand: ${getStrHand(playerHand)} (Total: ${handValue}) \n Busted!`
       );
+      setBalance(balance - bet);
       setBust(true);
     }
   }
 
   function dealPlayer(playerHand: ICard[], deck: Deck) {
+    let handValue = getHandValue(playerHand);
     playerHand = deck.deal(2);
     setPlayerHand(playerHand);
+    playerTurn(playerHand, deck);
+    if (handValue === 21) {
+      setBalance(bet * 2.5);
+      setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
+      setDeck(new Deck());
+      setPlayerHand([]);
+      setDealerHand([]);
+      setBet(0);
+    }
   }
 
   function dealDealer(dealerHand: ICard[], deck: Deck) {
+    let handValue = getHandValue(dealerHand);
     dealerHand = deck.deal(2);
     setDealerHand(dealerHand);
+    playerTurn(dealerHand, deck);
+    if (handValue === 21) {
+      setBalance(balance - bet);
+      setGameDecision(`Dealer has Blackjack! you Lost`);
+      setDeck(new Deck());
+      setPlayerHand([]);
+      setDealerHand([]);
+      setBet(0);
+    }
   }
 
   function dealerTurn(dealerHand: ICard[], deck: Deck) {
@@ -58,18 +102,21 @@ export default function Home() {
     } else {
       dealerHand.push(deck.deal(1)[0]);
       handValue = getHandValue(dealerHand);
+      setFinalDealerHand(handValue);
     }
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
-    setBet(event.target.value);
+    const value = parseFloat(event.target.value);
+    setBet(isNaN(value) ? 0 : value);
+    setBetError("");
   }
 
   function handleSubmitBet() {
-    if (parseInt(bet) > balance) {
-      setBet("Insufficient Balance");
-    } else if (parseInt(bet) <= 0) {
-      setBet("Invalid Bet!");
+    if (bet > balance) {
+      setBetError("Insufficient Balance");
+    } else if (bet <= 0) {
+      setBetError("Invalid Bet!");
     } else {
       dealDealer(playerHand, deck);
       dealPlayer(dealerHand, deck);
@@ -91,13 +138,16 @@ export default function Home() {
         </button>
       </div>
       <div>
-        <div>{JSON.stringify(playerHand)}</div>
-        <div>{JSON.stringify(dealerHand)}</div>
+        <div>
+          <span>{JSON.stringify(playerHand)}</span>
+        </div>
+        <div>
+          <span>{JSON.stringify(dealerHand)}</span>
+        </div>
       </div>
-      <div>
-        <div>{playerHandDisplay}</div>
-        <div>{dealerHandDisplay}</div>
-      </div>
+
+      <div>{gameDecision}</div>
+
       <div>
         <button
           onClick={() => {
