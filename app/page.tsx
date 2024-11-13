@@ -139,10 +139,15 @@ export default function Home() {
       </div>
       <div>
         <div>
-          <span>{JSON.stringify(playerHand)}</span>
-        </div>
-        <div>
+          <span>Dealer's Hand</span>
           <span>{JSON.stringify(dealerHand)}</span>
+        </div>
+
+        <div>
+          <span>Your Hand</span>
+          <span>
+            {JSON.stringify(playerHand)} Total: {getHandValue(playerHand)}
+          </span>
         </div>
       </div>
 
@@ -155,6 +160,8 @@ export default function Home() {
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
           }}
+          disabled={bet <= 0}
+          className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
         >
           Hit
         </button>
@@ -164,6 +171,8 @@ export default function Home() {
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
           }}
+          disabled={bet <= 0}
+          className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
         >
           Stand
         </button>
