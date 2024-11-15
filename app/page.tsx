@@ -29,11 +29,23 @@ export default function Home() {
       setPlayerHand(playerHand);
       if (handValue > finalDealerHand) {
         setBalance(balance + bet * 2);
-        setGameDecision("You Win!");
+        setGameDecision(
+          `You Win! Your Hand Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
+        );
       } else if (handValue < finalDealerHand) {
-        setGameDecision("You Lose!");
+        setGameDecision(
+          `You Lost! Your Hand Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
+        );
       } else if (handValue === finalDealerHand) {
-        setGameDecision("Push! / Tie!");
+        setGameDecision(
+          `Push/Tie! Your Hand Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
+        );
       }
       resetGame();
     }
@@ -69,6 +81,12 @@ export default function Home() {
       setGameDecision(`Dealer has Blackjack! you Lost`);
       resetGame();
     }
+
+    if (handValue > 21) {
+      setBalance(balance + bet * 2);
+      setGameDecision(`You win! Dealer Busted!`);
+      resetGame();
+    }
   }
 
   function dealerTurn(dealerHand: ICard[], deck: Deck) {
@@ -95,6 +113,7 @@ export default function Home() {
       setBalance(balance - bet);
       dealDealer(playerHand, deck);
       dealPlayer(dealerHand, deck);
+      setGameDecision("");
     }
   }
 
@@ -142,6 +161,7 @@ export default function Home() {
             setDecision("hit");
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
+            setPlayerHand(playerHand);
           }}
           disabled={bet <= 0}
           className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
