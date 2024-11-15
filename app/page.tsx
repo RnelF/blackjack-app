@@ -18,37 +18,37 @@ export default function Home() {
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
-  function playerTurn(playerHand: ICard[], deck: Deck) {
-    let handValue = getHandValue(playerHand);
+  function playerTurn(playerCards: ICard[], deck: Deck) {
+    let handValue = getHandValue(playerCards);
 
-    if (decision === "hit") {
-      playerHand.push(deck.deal(1)[0]);
-      handValue = getHandValue(playerHand);
-      setPlayerHand(playerHand);
-    } else if (decision === "stand") {
-      setPlayerHand(playerHand);
-      if (handValue > finalDealerHand) {
-        setBalance(balance + bet * 2);
-        setGameDecision(
-          `You Win! Your Hand Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
-        );
-      } else if (handValue < finalDealerHand) {
-        setGameDecision(
-          `You Lost! Your Hand Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
-        );
-      } else if (handValue === finalDealerHand) {
-        setGameDecision(
-          `Push/Tie! Your Hand Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand Total ${getHandValue(dealerHand)}`
-        );
-      }
-      resetGame();
+    setPlayerHand(playerCards);
+    if (handValue > finalDealerHand) {
+      setBalance(balance + bet * 2);
+      setGameDecision(
+        `You Win! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+          playerHand
+        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+          dealerHand
+        )}`
+      );
+    } else if (handValue < finalDealerHand) {
+      setGameDecision(
+        `You Lost! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+          playerHand
+        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+          dealerHand
+        )}`
+      );
+    } else if (handValue === finalDealerHand) {
+      setGameDecision(
+        `Push/Tie! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+          playerHand
+        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+          dealerHand
+        )}`
+      );
     }
+    resetGame();
 
     if (handValue > 21) {
       setGameDecision(
@@ -58,6 +58,17 @@ export default function Home() {
       setBust(true);
       resetGame();
     }
+
+    if (finalDealerHand > 21) {
+      setBalance(balance + bet * 2);
+      setGameDecision(`You win! Dealer Busted!`);
+      resetGame();
+    }
+  }
+
+  function playerHit(playerCards: ICard[], deck: Deck) {
+    playerCards.push(deck.deal(1)[0]);
+    setPlayerHand(playerCards);
   }
 
   function dealPlayer(playerHand: ICard[], deck: Deck) {
@@ -81,12 +92,7 @@ export default function Home() {
       setGameDecision(`Dealer has Blackjack! you Lost`);
       resetGame();
     }
-
-    if (handValue > 21) {
-      setBalance(balance + bet * 2);
-      setGameDecision(`You win! Dealer Busted!`);
-      resetGame();
-    }
+    setDealerHand(dealerHand);
   }
 
   function dealerTurn(dealerHand: ICard[], deck: Deck) {
@@ -131,9 +137,7 @@ export default function Home() {
         <h1>Blackjack</h1>
         <button
           onClick={() => {
-            setDeck(new Deck());
-            setPlayerHand([]);
-            setDealerHand([]);
+            resetGame();
           }}
         >
           Reset
@@ -159,9 +163,7 @@ export default function Home() {
         <button
           onClick={() => {
             setDecision("hit");
-            playerTurn(playerHand, deck);
-            dealerTurn(dealerHand, deck);
-            setPlayerHand(playerHand);
+            playerHit(playerHand, deck);
           }}
           disabled={bet <= 0}
           className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
