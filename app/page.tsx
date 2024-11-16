@@ -14,7 +14,7 @@ export default function Home() {
   const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
-  const [bet, setBet] = useState<number>(0);
+  const [bet, setBet] = useState<any>();
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
@@ -71,11 +71,10 @@ export default function Home() {
     setPlayerHand(playerCards);
   }
 
-  function dealPlayer(playerHand: ICard[], deck: Deck) {
-    let handValue = getHandValue(playerHand);
-    playerHand = deck.deal(2);
-    setPlayerHand(playerHand);
-    playerTurn(playerHand, deck);
+  function dealPlayer(playerCards: ICard[], deck: Deck) {
+    let handValue = getHandValue(playerCards);
+    playerCards = deck.deal(2);
+    setPlayerHand(playerCards);
     if (handValue === 21) {
       setBalance(bet * 2.5);
       setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
@@ -106,14 +105,14 @@ export default function Home() {
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
     const value = parseFloat(event.target.value);
-    setBet(isNaN(value) ? 0 : value);
+    setBet(value);
     setBetError("");
   }
 
   function handleSubmitBet() {
     if (bet > balance) {
       setBetError("Insufficient Balance");
-    } else if (bet <= 0) {
+    } else if (bet <= 0 || isNaN(bet)) {
       setBetError("Invalid Bet!");
     } else {
       setBalance(balance - bet);
@@ -176,14 +175,13 @@ export default function Home() {
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
           }}
-          disabled={bet <= 0}
           className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
         >
           Stand
         </button>
       </div>
       <div>
-        <input type="number" onChange={handleInputBet} value={bet} />{" "}
+        <input type="text" onChange={handleInputBet} value={bet} />{" "}
         <button onClick={handleSubmitBet}>Place Bet</button>
         <div>{bet}</div>
         <div>
