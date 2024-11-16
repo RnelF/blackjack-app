@@ -7,10 +7,8 @@ import { useState } from "react";
 export default function Home() {
   const [decision, setDecision] = useState("");
   const [playerHand, setPlayerHand] = useState<ICard[]>([]);
-  const [playerHandDisplay, setPlayerHandDisplay] = useState("");
   const [dealerHand, setDealerHand] = useState<ICard[]>([]);
-  const [finalDealerHand, setFinalDealerHand] = useState<number>(0);
-  const [dealerHandDisplay, setDealerHandDisplay] = useState("");
+
   const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
@@ -20,34 +18,35 @@ export default function Home() {
 
   function playerTurn(playerCards: ICard[], deck: Deck) {
     let handValue = getHandValue(playerCards);
-
-    if (handValue > finalDealerHand) {
-      setBalance(balance + bet * 2);
-      setGameDecision(
-        `You Win! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-          playerHand
-        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-          dealerHand
-        )}`
-      );
-    } else if (handValue < finalDealerHand) {
-      setGameDecision(
-        `You Lost! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-          playerHand
-        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-          dealerHand
-        )}`
-      );
-    } else if (handValue === finalDealerHand) {
-      setGameDecision(
-        `Push/Tie! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-          playerHand
-        )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-          dealerHand
-        )}`
-      );
+    while (gameDecision) {
+      if (handValue > getHandValue(dealerHand)) {
+        setBalance(balance + bet * 2);
+        setGameDecision(
+          `You Win! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+            dealerHand
+          )}`
+        );
+      } else if (handValue < getHandValue(dealerHand)) {
+        setGameDecision(
+          `You Lost! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+            dealerHand
+          )}`
+        );
+      } else if (handValue === getHandValue(dealerHand)) {
+        setGameDecision(
+          `Push/Tie! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
+            playerHand
+          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
+            dealerHand
+          )}`
+        );
+      }
+      resetGame();
     }
-    resetGame();
 
     if (handValue > 21) {
       setGameDecision(
@@ -56,11 +55,13 @@ export default function Home() {
       setBalance(balance - bet);
       setBust(true);
       resetGame();
-    }
-
-    if (finalDealerHand > 21) {
+    } else if (getHandValue(dealerHand) > 21) {
       setBalance(balance + bet * 2);
       setGameDecision(`You win! Dealer Busted!`);
+      resetGame();
+    } else if (handValue === 21) {
+      setBalance(bet * 2.5);
+      setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
       resetGame();
     }
   }
@@ -68,18 +69,13 @@ export default function Home() {
   function playerHit(playerCards: ICard[], deck: Deck) {
     playerCards.push(deck.deal(1)[0]);
     setPlayerHand(playerCards);
-    playerTurn(playerHand, deck);
+    console.log(playerHand);
   }
 
   function dealPlayer(playerCards: ICard[], deck: Deck) {
     let handValue = getHandValue(playerCards);
     playerCards = deck.deal(2);
     setPlayerHand(playerCards);
-    if (handValue === 21) {
-      setBalance(bet * 2.5);
-      setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
-      resetGame();
-    }
   }
 
   function dealDealer(dealerHand: ICard[], deck: Deck) {
@@ -100,13 +96,13 @@ export default function Home() {
     if (handValue < 17) {
       dealerCards.push(deck.deal(1)[0]);
       setDealerHand(dealerCards);
-      setFinalDealerHand(getHandValue(dealerCards));
     }
+    return;
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
     const value = parseFloat(event.target.value);
-    setBet(isNaN(value) ? 0 : value);
+    setBet(value);
     setBetError("");
   }
 
@@ -128,7 +124,10 @@ export default function Home() {
     setPlayerHand([]);
     setDealerHand([]);
     setBet(0);
+    setBetError("");
     setDecision("");
+    setGameDecision("");
+    setBust(false);
   }
 
   return (
@@ -159,32 +158,29 @@ export default function Home() {
 
       <div>{gameDecision}</div>
 
-      <div>
+      <div className="flex gap-4">
         <button
           onClick={() => {
             playerHit(playerHand, deck);
           }}
-          className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
+          className="border border-black bg-slate-50 rounded-md w-32"
         >
           Hit
         </button>
+
         <button
           onClick={() => {
             setDecision("stand");
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
           }}
+          className="border border-black bg-slate-50 rounded-md w-32"
         >
           Stand
         </button>
       </div>
       <div>
-        <input
-          type="text"
-          onChange={handleInputBet}
-          placeholder="Enter Bet"
-          value={bet}
-        />{" "}
+        <input type="text" onChange={handleInputBet} value={bet} />{" "}
         <button onClick={handleSubmitBet}>Place Bet</button>
         <div>
           <p>Current Balance: {balance}</p>
