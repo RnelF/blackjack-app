@@ -14,14 +14,13 @@ export default function Home() {
   const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
-  const [bet, setBet] = useState<any>();
+  const [bet, setBet] = useState<number>(0);
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
   function playerTurn(playerCards: ICard[], deck: Deck) {
     let handValue = getHandValue(playerCards);
 
-    setPlayerHand(playerCards);
     if (handValue > finalDealerHand) {
       setBalance(balance + bet * 2);
       setGameDecision(
@@ -69,6 +68,7 @@ export default function Home() {
   function playerHit(playerCards: ICard[], deck: Deck) {
     playerCards.push(deck.deal(1)[0]);
     setPlayerHand(playerCards);
+    playerTurn(playerHand, deck);
   }
 
   function dealPlayer(playerCards: ICard[], deck: Deck) {
@@ -94,18 +94,19 @@ export default function Home() {
     setDealerHand(dealerHand);
   }
 
-  function dealerTurn(dealerHand: ICard[], deck: Deck) {
-    let handValue = getHandValue(dealerHand);
+  function dealerTurn(dealerCards: ICard[], deck: Deck) {
+    let handValue = getHandValue(dealerCards);
 
     if (handValue < 17) {
-      dealerHand.push(deck.deal(1)[0]);
-      setFinalDealerHand(getHandValue(dealerHand));
+      dealerCards.push(deck.deal(1)[0]);
+      setDealerHand(dealerCards);
+      setFinalDealerHand(getHandValue(dealerCards));
     }
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
     const value = parseFloat(event.target.value);
-    setBet(value);
+    setBet(isNaN(value) ? 0 : value);
     setBetError("");
   }
 
@@ -114,7 +115,7 @@ export default function Home() {
       setBetError("Insufficient Balance");
     } else if (bet <= 0 || isNaN(bet)) {
       setBetError("Invalid Bet!");
-    } else {
+    } else if (bet > 0 && typeof bet === "number") {
       setBalance(balance - bet);
       dealDealer(playerHand, deck);
       dealPlayer(dealerHand, deck);
@@ -161,10 +162,8 @@ export default function Home() {
       <div>
         <button
           onClick={() => {
-            setDecision("hit");
             playerHit(playerHand, deck);
           }}
-          disabled={bet <= 0}
           className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
         >
           Hit
@@ -175,15 +174,18 @@ export default function Home() {
             playerTurn(playerHand, deck);
             dealerTurn(dealerHand, deck);
           }}
-          className={bet > 0 ? "enabled-button-class" : "disabled-button-class"}
         >
           Stand
         </button>
       </div>
       <div>
-        <input type="text" onChange={handleInputBet} value={bet} />{" "}
+        <input
+          type="text"
+          onChange={handleInputBet}
+          placeholder="Enter Bet"
+          value={bet}
+        />{" "}
         <button onClick={handleSubmitBet}>Place Bet</button>
-        <div>{bet}</div>
         <div>
           <p>Current Balance: {balance}</p>
         </div>
