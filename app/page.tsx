@@ -53,7 +53,13 @@ export default function Home() {
     const playerValue = getHandValue(playerHand);
 
     if (dealerValue === 21) {
-      setGameDecision(`Dealer Blackjack! You Lose!`);
+      if (balance === 0) {
+        setGameDecision(
+          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+        );
+      } else {
+        setGameDecision(`Dealer Blackjack! You Lose!`);
+      }
     } else if (dealerValue > 21) {
       setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
@@ -98,7 +104,13 @@ export default function Home() {
       setPlayerHand(playerStartingHand);
       setDealerHand(dealerStartingHand);
       setGameDecision("");
+      setDecision("");
       setBust(false);
+
+      if (getHandValue(playerStartingHand) === 21) {
+        setGameDecision("Blackjack! You win!");
+        setBalance((prevBalance) => prevBalance + bet * 2.5);
+      }
     }
   }
 
@@ -127,12 +139,16 @@ export default function Home() {
       </div>
       <div>
         <div>
-          <span>Dealer's Hand</span>
-          <span>{getStrHand(dealerHand)}</span>
+          <span>Dealer's Hand: </span>
+          <span>
+            {decision === "stand"
+              ? getStrHand(dealerHand)
+              : getStrHand(dealerHand, true)}
+          </span>
         </div>
 
         <div>
-          <span>Your Hand</span>
+          <span>Your Hand: </span>
           <span>
             {getStrHand(playerHand)} Total: {getHandValue(playerHand)}
           </span>
@@ -156,6 +172,7 @@ export default function Home() {
             setDecision("stand");
             playerStand();
           }}
+          disabled={decision === "stand"}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
           Stand
