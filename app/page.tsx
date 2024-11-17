@@ -8,7 +8,6 @@ export default function Home() {
   const [decision, setDecision] = useState("");
   const [playerHand, setPlayerHand] = useState<ICard[]>([]);
   const [dealerHand, setDealerHand] = useState<ICard[]>([]);
-
   const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
@@ -16,88 +15,68 @@ export default function Home() {
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
-  function playerTurn(playerCards: ICard[], deck: Deck) {
-    let handValue = getHandValue(playerCards);
-    while (gameDecision) {
-      if (handValue > getHandValue(dealerHand)) {
-        setBalance(balance + bet * 2);
-        setGameDecision(
-          `You Win! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-            dealerHand
-          )}`
-        );
-      } else if (handValue < getHandValue(dealerHand)) {
-        setGameDecision(
-          `You Lost! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-            dealerHand
-          )}`
-        );
-      } else if (handValue === getHandValue(dealerHand)) {
-        setGameDecision(
-          `Push/Tie! Your Hand ${getStrHand(playerHand)} Total ${getHandValue(
-            playerHand
-          )} , Dealer Hand: ${getStrHand(dealerHand)} Total ${getHandValue(
-            dealerHand
-          )}`
-        );
-      }
-      resetGame();
-    }
+  function playerHit() {
+    const newCard = deck.deal(1)[0];
+    const updatedPlayerHand = [...playerHand, newCard];
+    setPlayerHand(updatedPlayerHand);
 
+    // Check if the player busts after hitting
+    const handValue = getHandValue(updatedPlayerHand);
     if (handValue > 21) {
       setGameDecision(
-        `Your hand: ${getStrHand(playerHand)} (Total: ${handValue}) \n Busted!`
+        `Bust! You lost. Your hand: ${getStrHand(
+          updatedPlayerHand
+        )} (Total: ${handValue})`
       );
       setBalance(balance - bet);
       setBust(true);
       resetGame();
-    } else if (getHandValue(dealerHand) > 21) {
+    }
+  }
+
+  function playerStand() {
+    setDecision("stand");
+    dealerTurn();
+  }
+
+  function dealerTurn() {
+    let updatedDealerHand = [...dealerHand];
+
+    while (getHandValue(updatedDealerHand) < 17) {
+      updatedDealerHand.push(deck.deal(1)[0]);
+      setDealerHand([...updatedDealerHand]);
+    }
+
+    // Check the game outcome after the dealer finishes their turn
+    const dealerValue = getHandValue(updatedDealerHand);
+    const playerValue = getHandValue(playerHand);
+
+    if (dealerValue > 21) {
+      setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
-      setGameDecision(`You win! Dealer Busted!`);
-      resetGame();
-    } else if (handValue === 21) {
-      setBalance(bet * 2.5);
-      setGameDecision(`Blackjack! you Won $${bet * 2.5}`);
-      resetGame();
+    } else if (playerValue > dealerValue) {
+      setGameDecision(
+        `You Win! Your Hand: ${getStrHand(
+          playerHand
+        )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
+          updatedDealerHand
+        )} Total: ${dealerValue}`
+      );
+      setBalance(balance + bet * 2);
+    } else if (playerValue < dealerValue) {
+      setGameDecision(
+        `You Lose! Your Hand: ${getStrHand(
+          playerHand
+        )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
+          updatedDealerHand
+        )} Total: ${dealerValue}`
+      );
+    } else {
+      setGameDecision(`Push! It's a tie.`);
+      setBalance(balance + bet); // Return the bet on a tie
     }
-  }
 
-  function playerHit(playerCards: ICard[], deck: Deck) {
-    playerCards.push(deck.deal(1)[0]);
-    setPlayerHand(playerCards);
-    console.log(playerHand);
-  }
-
-  function dealPlayer(playerCards: ICard[], deck: Deck) {
-    let handValue = getHandValue(playerCards);
-    playerCards = deck.deal(2);
-    setPlayerHand(playerCards);
-  }
-
-  function dealDealer(dealerHand: ICard[], deck: Deck) {
-    let handValue = getHandValue(dealerHand);
-    dealerHand = deck.deal(2);
-    setDealerHand(dealerHand);
-    playerTurn(dealerHand, deck);
-    if (handValue === 21) {
-      setGameDecision(`Dealer has Blackjack! you Lost`);
-      resetGame();
-    }
-    setDealerHand(dealerHand);
-  }
-
-  function dealerTurn(dealerCards: ICard[], deck: Deck) {
-    let handValue = getHandValue(dealerCards);
-
-    if (handValue < 17) {
-      dealerCards.push(deck.deal(1)[0]);
-      setDealerHand(dealerCards);
-    }
-    return;
+    resetGame();
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
@@ -113,9 +92,12 @@ export default function Home() {
       setBetError("Invalid Bet!");
     } else if (bet > 0 && typeof bet === "number") {
       setBalance(balance - bet);
-      dealDealer(playerHand, deck);
-      dealPlayer(dealerHand, deck);
+      const playerStartingHand = deck.deal(2);
+      const dealerStartingHand = deck.deal(2);
+      setPlayerHand(playerStartingHand);
+      setDealerHand(dealerStartingHand);
       setGameDecision("");
+      setBust(false);
     }
   }
 
@@ -161,7 +143,7 @@ export default function Home() {
       <div className="flex gap-4">
         <button
           onClick={() => {
-            playerHit(playerHand, deck);
+            playerHit();
           }}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
@@ -171,8 +153,7 @@ export default function Home() {
         <button
           onClick={() => {
             setDecision("stand");
-            playerTurn(playerHand, deck);
-            dealerTurn(dealerHand, deck);
+            dealerTurn();
           }}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
