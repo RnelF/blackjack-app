@@ -11,7 +11,7 @@ export default function Home() {
   const [gameDecision, setGameDecision] = useState("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
-  const [bet, setBet] = useState<number>(0);
+  const [bet, setBet] = useState<any>("");
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
 
@@ -87,18 +87,20 @@ export default function Home() {
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
-    const value = parseFloat(event.target.value);
-    setBet(value);
+    const value = event.target.value;
+    setBet(value); // Update bet directly with the input value
     setBetError("");
   }
 
   function handleSubmitBet() {
-    if (bet > balance) {
+    const betAmount = parseFloat(bet);
+
+    if (betAmount > balance) {
       setBetError("Insufficient Balance");
-    } else if (bet <= 0 || isNaN(bet)) {
+    } else if (isNaN(betAmount) || betAmount <= 0) {
       setBetError("Invalid Bet!");
-    } else if (bet > 0 && typeof bet === "number") {
-      setBalance(balance - bet);
+    } else {
+      setBalance(balance - betAmount);
       const playerStartingHand = deck.deal(2);
       const dealerStartingHand = deck.deal(2);
       setPlayerHand(playerStartingHand);
@@ -110,7 +112,7 @@ export default function Home() {
       if (getHandValue(playerStartingHand) === 21) {
         setDecision("stand");
         setGameDecision("Blackjack! You win!");
-        setBalance((prevBalance) => prevBalance + bet * 2.5);
+        setBalance((prevBalance) => prevBalance + betAmount * 2.5);
       }
     }
   }
