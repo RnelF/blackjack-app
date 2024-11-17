@@ -5,6 +5,7 @@ export function getHandValue(cards: ICard[]): number {
   let aces = 0;
 
   for (const card of cards) {
+    if (!card) continue;
     if (card.value === 1) {
       aces++;
       continue;
@@ -50,6 +51,7 @@ export function getStrHand(
   let str = "";
 
   for (const [idx, card] of hand.entries()) {
+    if (!card) continue;
     if (idx !== 0) str += ", ";
     if (idx === 1 && hideSecondCard) {
       str += "[hidden]";

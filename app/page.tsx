@@ -14,6 +14,7 @@ export default function Home() {
   const [bet, setBet] = useState<any>("");
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
+  const [play, setPlay] = useState(false);
 
   function playerHit() {
     if (gameDecision) return; // Prevent further actions if the game has ended
@@ -32,11 +33,11 @@ export default function Home() {
       );
       setBalance(balance - bet);
       setBust(true);
+      setPlay(false);
     }
   }
 
   function playerStand() {
-    setDecision("stand");
     dealerTurn();
   }
 
@@ -57,12 +58,15 @@ export default function Home() {
         setGameDecision(
           "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
         );
+        setPlay(false);
       } else {
         setGameDecision(`Dealer Blackjack! You Lose!`);
+        setPlay(false);
       }
     } else if (dealerValue > 21) {
       setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
+      setPlay(false);
     } else if (playerValue > dealerValue) {
       setGameDecision(
         `You Win! Your Hand: ${getStrHand(
@@ -72,6 +76,7 @@ export default function Home() {
         )} Total: ${dealerValue}`
       );
       setBalance(balance + bet * 2);
+      setPlay(false);
     } else if (playerValue < dealerValue) {
       setGameDecision(
         `You Lose! Your Hand: ${getStrHand(
@@ -80,16 +85,29 @@ export default function Home() {
           updatedDealerHand
         )} Total: ${dealerValue}`
       );
+      setPlay(false);
     } else {
       setGameDecision(`Push! It's a tie.`);
       setBalance(balance + bet); // Return the bet on a tie
+      setPlay(false);
     }
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
-    setBet(value); // Update bet directly with the input value
-    setBetError("");
+    if (value === "") {
+      setBet(0);
+      return;
+    }
+
+    // Otherwise, parse the input as a number
+    const parsedValue = parseFloat(value);
+
+    // Only update bet if it's a valid number
+    if (!isNaN(parsedValue)) {
+      setBet(parsedValue);
+      setBetError("");
+    }
   }
 
   function handleSubmitBet() {
@@ -108,6 +126,7 @@ export default function Home() {
       setGameDecision("");
       setDecision("");
       setBust(false);
+      setPlay(true);
 
       if (getHandValue(playerStartingHand) === 21) {
         setDecision("stand");
@@ -125,7 +144,9 @@ export default function Home() {
     setBetError("");
     setDecision("");
     setGameDecision("");
+    setBalance(100);
     setBust(false);
+    setPlay(false);
   }
 
   return (
@@ -137,7 +158,7 @@ export default function Home() {
             resetGame();
           }}
         >
-          Reset
+          Reset Game
         </button>
       </div>
       <div>
@@ -165,7 +186,7 @@ export default function Home() {
           onClick={() => {
             playerHit();
           }}
-          disabled={decision === "stand" || bust}
+          disabled={decision === "stand" || !play}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
           Hit
@@ -176,15 +197,17 @@ export default function Home() {
             setDecision("stand");
             playerStand();
           }}
-          disabled={decision === "stand" || bust}
+          disabled={decision === "stand" || !play}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
           Stand
         </button>
       </div>
       <div>
-        <input type="text" onChange={handleInputBet} value={bet} />{" "}
-        <button onClick={handleSubmitBet}>Place Bet</button>
+        <input type="text" onChange={handleInputBet} value={bet} />
+        <button onClick={handleSubmitBet} disabled={play}>
+          Place Bet
+        </button>
         <div>{betError}</div>
         <div>
           <p>Current Balance: {balance}</p>
