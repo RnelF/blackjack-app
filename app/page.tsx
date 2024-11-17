@@ -108,6 +108,7 @@ export default function Home() {
       setBust(false);
 
       if (getHandValue(playerStartingHand) === 21) {
+        setDecision("stand");
         setGameDecision("Blackjack! You win!");
         setBalance((prevBalance) => prevBalance + bet * 2.5);
       }
@@ -162,6 +163,7 @@ export default function Home() {
           onClick={() => {
             playerHit();
           }}
+          disabled={decision === "stand" || bust}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
           Hit
@@ -172,7 +174,7 @@ export default function Home() {
             setDecision("stand");
             playerStand();
           }}
-          disabled={decision === "stand"}
+          disabled={decision === "stand" || bust}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
           Stand
