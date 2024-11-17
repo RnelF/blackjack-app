@@ -16,6 +16,8 @@ export default function Home() {
   const [deck, setDeck] = useState(new Deck());
 
   function playerHit() {
+    if (gameDecision) return; // Prevent further actions if the game has ended
+
     const newCard = deck.deal(1)[0];
     const updatedPlayerHand = [...playerHand, newCard];
     setPlayerHand(updatedPlayerHand);
@@ -30,7 +32,6 @@ export default function Home() {
       );
       setBalance(balance - bet);
       setBust(true);
-      resetGame();
     }
   }
 
@@ -51,7 +52,9 @@ export default function Home() {
     const dealerValue = getHandValue(updatedDealerHand);
     const playerValue = getHandValue(playerHand);
 
-    if (dealerValue > 21) {
+    if (dealerValue === 21) {
+      setGameDecision(`Dealer Blackjack! You Lose!`);
+    } else if (dealerValue > 21) {
       setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
     } else if (playerValue > dealerValue) {
@@ -75,8 +78,6 @@ export default function Home() {
       setGameDecision(`Push! It's a tie.`);
       setBalance(balance + bet); // Return the bet on a tie
     }
-
-    resetGame();
   }
 
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
@@ -127,13 +128,13 @@ export default function Home() {
       <div>
         <div>
           <span>Dealer's Hand</span>
-          <span>{JSON.stringify(dealerHand)}</span>
+          <span>{getStrHand(dealerHand)}</span>
         </div>
 
         <div>
           <span>Your Hand</span>
           <span>
-            {JSON.stringify(playerHand)} Total: {getHandValue(playerHand)}
+            {getStrHand(playerHand)} Total: {getHandValue(playerHand)}
           </span>
         </div>
       </div>
@@ -153,7 +154,7 @@ export default function Home() {
         <button
           onClick={() => {
             setDecision("stand");
-            dealerTurn();
+            playerStand();
           }}
           className="border border-black bg-slate-50 rounded-md w-32"
         >
@@ -163,6 +164,7 @@ export default function Home() {
       <div>
         <input type="text" onChange={handleInputBet} value={bet} />{" "}
         <button onClick={handleSubmitBet}>Place Bet</button>
+        <div>{betError}</div>
         <div>
           <p>Current Balance: {balance}</p>
         </div>
