@@ -15,6 +15,7 @@ export default function Home() {
   const [betError, setBetError] = useState<string>("");
   const [deck, setDeck] = useState(new Deck());
   const [play, setPlay] = useState(false);
+  const [deckQuantity, setDeckQuantity] = useState(deck.getDeckQuantity());
 
   function playerHit() {
     if (gameDecision) return; // Prevent further actions if the game has ended
@@ -22,6 +23,8 @@ export default function Home() {
     const newCard = deck.deal(1)[0];
     const updatedPlayerHand = [...playerHand, newCard];
     setPlayerHand(updatedPlayerHand);
+
+    setDeckQuantity(deck.getDeckQuantity());
 
     // Check if the player busts after hitting
     const handValue = getHandValue(updatedPlayerHand);
@@ -54,6 +57,8 @@ export default function Home() {
     while (getHandValue(updatedDealerHand) < 17) {
       updatedDealerHand.push(deck.deal(1)[0]);
       setDealerHand([...updatedDealerHand]);
+
+      setDeckQuantity(deck.getDeckQuantity());
     }
 
     // Check the game outcome after the dealer finishes their turn
@@ -65,10 +70,11 @@ export default function Home() {
         setGameDecision(
           "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
         );
+        setPlay(false);
       } else {
         setGameDecision(`Dealer Blackjack! You Lose!`);
+        setPlay(false);
       }
-      setPlay(false);
     } else if (dealerValue > 21) {
       setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
@@ -97,9 +103,8 @@ export default function Home() {
             updatedDealerHand
           )} Total: ${dealerValue}`
         );
+        setPlay(false);
       }
-
-      setPlay(false);
     } else {
       setGameDecision(`Push! It's a tie.`);
       setBalance(balance + bet); // Return the bet on a tie
@@ -127,27 +132,44 @@ export default function Home() {
   function handleSubmitBet() {
     const betAmount = parseFloat(bet);
 
+    // Validate the bet
     if (betAmount > balance) {
       setBetError("Insufficient Balance");
+      return;
     } else if (isNaN(betAmount) || betAmount <= 0) {
       setBetError("Invalid Bet!");
-    } else {
-      setBalance(balance - betAmount);
-      const playerStartingHand = deck.deal(2);
-      const dealerStartingHand = deck.deal(2);
-      setPlayerHand(playerStartingHand);
-      setDealerHand(dealerStartingHand);
-      setGameDecision("");
-      setDecision("");
-      setBust(false);
-      setPlay(true);
+      return;
+    }
 
-      if (getHandValue(playerStartingHand) === 21) {
-        setDecision("stand");
-        setGameDecision("Blackjack! You win!");
-        setBalance((prevBalance) => prevBalance + betAmount * 2.5);
-        setPlay(false);
-      }
+    // Deduct bet from balance and clear errors
+    setBalance(balance - betAmount);
+    setBetError("");
+
+    // Reset deck if quantity is low
+    if (deckQuantity < 10) {
+      deck.reset();
+    }
+
+    // Deal initial hands
+    const playerStartingHand = deck.deal(2);
+    const dealerStartingHand = deck.deal(2);
+    setPlayerHand(playerStartingHand);
+    setDealerHand(dealerStartingHand);
+    setDeckQuantity(deck.getDeckQuantity());
+
+    // Clear game state for a new round
+    setGameDecision("");
+    setDecision("");
+    setBust(false);
+    setPlay(true);
+
+    // Check for immediate Blackjack for player
+    const playerHandValue = getHandValue(playerStartingHand);
+    if (playerHandValue === 21) {
+      setDecision("stand");
+      setGameDecision("Blackjack! You win!");
+      setBalance((prevBalance) => prevBalance + betAmount * 2.5);
+      setPlay(false);
     }
   }
 
@@ -168,6 +190,7 @@ export default function Home() {
     <div className="flex flex-col gap-4 items-center justify-center">
       <div>
         <h1>Blackjack</h1>
+        <div>Deck Quantity: {deckQuantity}</div>
         <button
           onClick={() => {
             resetGame();

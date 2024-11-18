@@ -31,6 +31,10 @@ class Deck implements IDealable {
     }
   }
 
+  getDeckQuantity() {
+    return this.deck.length - 1;
+  }
+
   private makeDeck() {
     const cards: Card[] = [];
     const suits = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
