@@ -26,11 +26,18 @@ export default function Home() {
     // Check if the player busts after hitting
     const handValue = getHandValue(updatedPlayerHand);
     if (handValue > 21) {
-      setGameDecision(
-        `Bust! You lost. Your hand: ${getStrHand(
-          updatedPlayerHand
-        )} (Total: ${handValue})`
-      );
+      if (balance === 0) {
+        setGameDecision(
+          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+        );
+      } else {
+        setGameDecision(
+          `Bust! You lost. Your hand: ${getStrHand(
+            updatedPlayerHand
+          )} (Total: ${handValue})`
+        );
+      }
+
       setBalance(balance - bet);
       setBust(true);
       setPlay(false);
@@ -58,11 +65,10 @@ export default function Home() {
         setGameDecision(
           "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
         );
-        setPlay(false);
       } else {
         setGameDecision(`Dealer Blackjack! You Lose!`);
-        setPlay(false);
       }
+      setPlay(false);
     } else if (dealerValue > 21) {
       setGameDecision(`Dealer Busts! You win!`);
       setBalance(balance + bet * 2);
@@ -78,13 +84,21 @@ export default function Home() {
       setBalance(balance + bet * 2);
       setPlay(false);
     } else if (playerValue < dealerValue) {
-      setGameDecision(
-        `You Lose! Your Hand: ${getStrHand(
-          playerHand
-        )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
-          updatedDealerHand
-        )} Total: ${dealerValue}`
-      );
+      if (balance === 0) {
+        setGameDecision(
+          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+        );
+        setPlay(false);
+      } else {
+        setGameDecision(
+          `You Lose! Your Hand: ${getStrHand(
+            playerHand
+          )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
+            updatedDealerHand
+          )} Total: ${dealerValue}`
+        );
+      }
+
       setPlay(false);
     } else {
       setGameDecision(`Push! It's a tie.`);
@@ -132,6 +146,7 @@ export default function Home() {
         setDecision("stand");
         setGameDecision("Blackjack! You win!");
         setBalance((prevBalance) => prevBalance + betAmount * 2.5);
+        setPlay(false);
       }
     }
   }
@@ -166,7 +181,7 @@ export default function Home() {
           <span>Dealer's Hand: </span>
           <span>
             {decision === "stand"
-              ? getStrHand(dealerHand)
+              ? `${getStrHand(dealerHand)} Total: ${getHandValue(dealerHand)} `
               : getStrHand(dealerHand, true)}
           </span>
         </div>
