@@ -230,7 +230,12 @@ export default function Home() {
           <span>Dealer's Hand: </span>
           <span>
             {decision === "stand"
-              ? `${getStrHand(dealerHand)} Total: ${getHandValue(dealerHand)} `
+              ? dealerHand.map((card) => (
+                  <div key={(card.value, card.suit)}>
+                    <span>{card.value}</span>
+                    <span>{card.suit}</span>
+                  </div>
+                ))
               : getStrHand(dealerHand, true)}
           </span>
         </div>
