@@ -8,7 +8,7 @@ export default function Home() {
   const [decision, setDecision] = useState("");
   const [playerHand, setPlayerHand] = useState<ICard[]>([]);
   const [dealerHand, setDealerHand] = useState<ICard[]>([]);
-  const [gameDecision, setGameDecision] = useState("");
+  const [gameDecision, setGameDecision] = useState<JSX.Element | string>("");
   const [balance, setBalance] = useState(100);
   const [bust, setBust] = useState(false);
   const [bet, setBet] = useState<any>("");
@@ -31,7 +31,17 @@ export default function Home() {
     if (handValue > 21) {
       if (balance === 0) {
         setGameDecision(
-          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+          <>
+            Busted! <br />
+            You ran out of funds! GAME OVER! <br />
+            <button
+              className="rounded border border-black bg-slate-50 w-16"
+              onClick={resetGame}
+            >
+              Reset
+            </button>
+            the game if you'd like to play again!
+          </>
         );
       } else {
         setGameDecision(
@@ -39,11 +49,10 @@ export default function Home() {
             updatedPlayerHand
           )} (Total: ${handValue})`
         );
+        setBalance(balance - bet);
+        setBust(true);
+        setPlay(false);
       }
-
-      setBalance(balance - bet);
-      setBust(true);
-      setPlay(false);
     }
   }
 
@@ -68,7 +77,19 @@ export default function Home() {
     if (dealerValue === 21) {
       if (balance === 0) {
         setGameDecision(
-          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+          <>
+            Your hand Total: {getHandValue(playerHand)} <br />
+            Dealer hand Total: {getHandValue(dealerHand)} <br />
+            You Lose! <br />
+            You ran out of funds! GAME OVER! <br />
+            <button
+              className="rounded border border-black bg-slate-50 w-16"
+              onClick={resetGame}
+            >
+              Reset
+            </button>
+            the game if you'd like to play again!
+          </>
         );
         setPlay(false);
       } else {
@@ -92,7 +113,19 @@ export default function Home() {
     } else if (playerValue < dealerValue) {
       if (balance === 0) {
         setGameDecision(
-          "You run out of funds! GAME OVER! \n Reset the game if Like to play Again!"
+          <>
+            Your hand Total: {getHandValue(playerHand)} <br />
+            Dealer hand Total: {getHandValue(dealerHand)} <br />
+            You Lose! <br />
+            You ran out of funds! GAME OVER! <br />
+            <button
+              className="rounded border border-black bg-slate-50 w-16"
+              onClick={resetGame}
+            >
+              Reset
+            </button>
+            the game if you'd like to play again!
+          </>
         );
         setPlay(false);
       } else {
@@ -191,13 +224,6 @@ export default function Home() {
       <div>
         <h1>Blackjack</h1>
         <div>Deck Quantity: {deckQuantity}</div>
-        <button
-          onClick={() => {
-            resetGame();
-          }}
-        >
-          Reset Game
-        </button>
       </div>
       <div>
         <div>
@@ -217,7 +243,9 @@ export default function Home() {
         </div>
       </div>
 
-      <div>{gameDecision}</div>
+      <div className="whitespace-pre-line text-center font-semibold">
+        {gameDecision}
+      </div>
 
       <div className="flex gap-4">
         <button
