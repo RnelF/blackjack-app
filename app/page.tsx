@@ -43,6 +43,7 @@ export default function Home() {
             the game if you'd like to play again!
           </>
         );
+        setPlay(false);
       } else {
         setGameDecision(
           `Bust! You lost. Your hand: ${getStrHand(
@@ -138,7 +139,7 @@ export default function Home() {
         );
         setPlay(false);
       }
-    } else {
+    } else if (dealerValue === playerValue) {
       setGameDecision(`Push! It's a tie.`);
       setBalance(balance + bet); // Return the bet on a tie
       setPlay(false);
@@ -231,8 +232,8 @@ export default function Home() {
           <span>
             {decision === "stand"
               ? dealerHand.map((card) => (
-                  <div key={(card.value, card.suit)}>
-                    <span>{card.value}</span>
+                  <div key={card.getName()}>
+                    <span>{card.value === 1 ? "A" : card.value}</span>
                     <span>{card.suit}</span>
                   </div>
                 ))
