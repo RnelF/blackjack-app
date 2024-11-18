@@ -25,6 +25,12 @@ class Deck implements IDealable {
     return dealtCards;
   }
 
+  checkAndRefill(num: number) {
+    if (this.deck.length < num) {
+      this.reset();
+    }
+  }
+
   private makeDeck() {
     const cards: Card[] = [];
     const suits = [Suit.Hearts, Suit.Diamonds, Suit.Clubs, Suit.Spades];
