@@ -226,7 +226,7 @@ export default function Home() {
         <h1>Blackjack</h1>
         <div>Deck Quantity: {deckQuantity}</div>
       </div>
-      <div className="mb-16 flex flex-col items-center justify-center gap-14">
+      <div className="mb-16 flex flex-col items-center justify-center gap-20">
         <div>
           <div className="relative inline-block ">
             {decision === "stand" ? (
@@ -296,7 +296,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className={play ? "hidden" : "font-semibold text-2xl mt-6"}>
+        <div className={play ? "hidden" : "font-semibold text-2xl"}>
           Dealer Hand Total: {getHandValue(dealerHand)}
         </div>
 
@@ -362,7 +362,12 @@ export default function Home() {
         </button>
       </div>
       <div>
-        <input type="text" onChange={handleInputBet} value={bet} />
+        <input
+          type="text"
+          onChange={handleInputBet}
+          disabled={play}
+          value={bet}
+        />
         <button
           onClick={handleSubmitBet}
           disabled={play}
