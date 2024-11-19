@@ -244,7 +244,14 @@ export default function Home() {
         <div>
           <span>Your Hand: </span>
           <span>
-            {getStrHand(playerHand)} Total: {getHandValue(playerHand)}
+            {decision === "stand"
+              ? playerHand.map((card) => (
+                  <div key={card.getName()}>
+                    <span>{card.value === 1 ? "A" : card.value}</span>
+                    <span>{card.suit}</span>
+                  </div>
+                ))
+              : getStrHand(playerHand, true)}
           </span>
         </div>
       </div>
@@ -253,13 +260,13 @@ export default function Home() {
         {gameDecision}
       </div>
 
-      <div className="flex gap-4">
+      <div className={!play ? "hidden" : "flex gap-4"}>
         <button
           onClick={() => {
             playerHit();
           }}
           disabled={decision === "stand" || !play}
-          className="border border-black bg-slate-50 rounded-md w-32"
+          className="border border-black bg-slate-50 rounded-md w-32 font-semibold"
         >
           Hit
         </button>
@@ -270,14 +277,18 @@ export default function Home() {
             playerStand();
           }}
           disabled={decision === "stand" || !play}
-          className="border border-black bg-slate-50 rounded-md w-32"
+          className="border border-black bg-slate-50 rounded-md w-32 font-semibold"
         >
           Stand
         </button>
       </div>
       <div>
         <input type="text" onChange={handleInputBet} value={bet} />
-        <button onClick={handleSubmitBet} disabled={play}>
+        <button
+          onClick={handleSubmitBet}
+          disabled={play}
+          className="border border-black bg-slate-50 rounded-md w-24 ml-3 font-semibold"
+        >
           Place Bet
         </button>
         <div>{betError}</div>
