@@ -226,10 +226,9 @@ export default function Home() {
         <h1>Blackjack</h1>
         <div>Deck Quantity: {deckQuantity}</div>
       </div>
-      <div className="mb-16 flex flex-col gap-24">
+      <div className="mb-16 flex flex-col items-center justify-center gap-14">
         <div>
-          <span>Dealer's Hand: </span>
-          <div className="relative inline-block">
+          <div className="relative inline-block ">
             {decision === "stand" ? (
               dealerHand.map((card, index) => (
                 <div
@@ -242,7 +241,7 @@ export default function Home() {
                     left: `${index * 1.5}rem`,
                   }}
                 >
-                  <span className="absolute top-4">
+                  <span className="absolute top-4 right-7">
                     {card.value === 1 ? "A" : card.value}
                   </span>
                   <span
@@ -261,13 +260,13 @@ export default function Home() {
                 {/* First card: face-up (only if it exists) */}
                 {dealerHand[0] && (
                   <div
-                    className="absolute bg-white text-black p-2 w-12 h-20 items-start rounded border border-black shadow-lg"
+                    className=" absolute bg-white text-black p-2 w-12 h-20 items-start rounded border border-black shadow-lg"
                     style={{
                       transform: `rotate(-5deg)`,
                       left: "0rem",
                     }}
                   >
-                    <span className="absolute top-4">
+                    <span className="absolute top-4 right-7">
                       {dealerHand[0].value === 1 ? "A" : dealerHand[0].value}
                     </span>
                     <span
@@ -297,8 +296,11 @@ export default function Home() {
           </div>
         </div>
 
+        <div className={play ? "hidden" : "font-semibold text-2xl mt-6"}>
+          Dealer Hand Total: {getHandValue(dealerHand)}
+        </div>
+
         <div>
-          <span>Your Hand: </span>
           <div className="relative inline-block">
             {playerHand.map((card, index) => (
               <div
@@ -309,7 +311,7 @@ export default function Home() {
                   left: `${index * 1.5}rem`,
                 }}
               >
-                <span className="absolute top-4">
+                <span className="absolute top-4 right-7">
                   {card.value === 1 ? "A" : card.value}
                 </span>
                 <span
@@ -327,12 +329,14 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="whitespace-pre-line text-center font-semibold">
-        {gameDecision}
+      <div>
+        <span className="font-semibold text-2xl">
+          Your hand total: {getHandValue(playerHand)}
+        </span>
       </div>
 
-      <div>
-        <span>Total: {getHandValue(playerHand)}</span>
+      <div className="whitespace-pre-line text-center font-semibold">
+        {gameDecision}
       </div>
 
       <div className={!play ? "hidden" : "flex gap-4"}>
