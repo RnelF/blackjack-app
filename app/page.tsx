@@ -32,15 +32,16 @@ export default function Home() {
       if (balance === 0) {
         setGameDecision(
           <>
-            Busted! <br />
+            Busted! Hand Total: {getHandValue(updatedPlayerHand)}
+            <br />
             You ran out of funds! GAME OVER! <br />
             <button
-              className="rounded border border-black bg-slate-50 w-16"
+              className="rounded border border-black bg-slate-50 w-14"
               onClick={resetGame}
             >
               Reset
             </button>
-            the game if you like to play again!
+            <span> the game if you like to play again!</span>
           </>
         );
         setPlay(false);
@@ -204,18 +205,37 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center">
-      <div>
-        <h1>Blackjack</h1>
-        <div>Deck Quantity: {deckQuantity}</div>
-      </div>
-      <div className="mb-16 flex flex-col items-center justify-center gap-20">
+      <div className="flex flex-col gap-2 justify-center items-center">
         <div>
-          <div className="relative inline-block ">
+          <h1 className="text-4xl font-semibold">Blackjack</h1>
+        </div>
+
+        <div>
+          <div
+            className="absolute bg-blue-500 w-9 h-14 shadow-lg flex justify-center items-center rounded border-2 border-black border-double"
+            style={{
+              backgroundImage: `repeating-linear-gradient(45deg, #1d4ed8 0, #1d4ed8 10px, #3b82f6 10px, #3b82f6 20px)`,
+              backgroundSize: "cover",
+            }}
+          >
+            <div className=" relativebg-white w-4 h-4 rounded-full border border-black flex justify-center items-center">
+              <div className="w-2 h-2 bg-blue-500 rounded-full">
+                <span className="absolute top-4 left-2 text-sm font-bold text-white">
+                  {deckQuantity}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="mb-16 mt-20 flex flex-col items-center justify-center gap-20">
+        <div>
+          <div className="relative inline-block perspective">
             {decision === "stand" ? (
               dealerHand.map((card, index) => (
                 <div
                   key={`${card.getName()}-${card.value}-${card.suit}-${index}`}
-                  className="absolute bg-white text-black p-2 w-12 h-20 items-start shadow-lg rounded border border-black"
+                  className="absolute bg-white text-black p-2 w-12 h-20 items-start shadow-lg rounded border border-black -bottom-16"
                   style={{
                     transform: `rotate(${
                       index * 10 - dealerHand.length * 3
@@ -266,7 +286,7 @@ export default function Home() {
                 {/* Second card: back of the card (only if it exists) */}
                 {dealerHand[1] && (
                   <div
-                    className="animate-deal absolute bg-blue-500 w-12 h-20 shadow-lg flex justify-center items-center rounded-lg border-2 border-black border-double"
+                    className="animate-deal absolute bg-blue-500 w-12 h-20 shadow-lg flex justify-center items-center rounded border-2 border-black border-double"
                     style={{
                       backgroundImage: `repeating-linear-gradient(45deg, #1d4ed8 0, #1d4ed8 10px, #3b82f6 10px, #3b82f6 20px)`,
                       backgroundSize: "cover",
@@ -295,7 +315,11 @@ export default function Home() {
             {playerHand.map((card, index) => (
               <div
                 key={`${card.getName()}-${card.value}-${card.suit}-${index}`}
-                className="absolute bg-white text-black p-2 w-12 h-20 flex flex-col items-start shadow-lg rounded border border-black animate-deal"
+                className={
+                  decision === "stand"
+                    ? "absolute bg-white text-black p-2 w-12 h-20 flex flex-col items-start shadow-lg rounded border border-black animate-deal -bottom-10"
+                    : "absolute bg-white text-black p-2 w-12 h-20 flex flex-col items-start shadow-lg rounded border border-black animate-deal"
+                }
                 style={{
                   transform: `rotate(${index * 10 - playerHand.length * 3}deg)`,
                   left: `${index * 1.3}rem`,
@@ -317,12 +341,11 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </div>
-
-      <div>
-        <span className={!play ? "hidden" : "font-semibold text-xl"}>
-          Your hand total: {getHandValue(playerHand)}
-        </span>
+        <div>
+          <span className={!play ? "hidden" : "font-semibold text-xl"}>
+            Your hand total: {getHandValue(playerHand)}
+          </span>
+        </div>
       </div>
 
       <div className="whitespace-pre-line text-center font-semibold">
@@ -351,7 +374,7 @@ export default function Home() {
           Stand
         </button>
       </div>
-      <div>
+      <div className={play ? "hidden" : ""}>
         <input
           type="text"
           onChange={handleInputBet}
@@ -366,9 +389,9 @@ export default function Home() {
           Place Bet
         </button>
         <div>{betError}</div>
-        <div>
-          <p>Current Balance: {balance}</p>
-        </div>
+      </div>
+      <div>
+        <p>Current Balance: {balance}</p>
       </div>
     </div>
   );

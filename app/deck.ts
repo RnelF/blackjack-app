@@ -32,7 +32,7 @@ class Deck implements IDealable {
   }
 
   getDeckQuantity() {
-    return this.deck.length - 1;
+    return this.deck.length;
   }
 
   private makeDeck() {
