@@ -45,11 +45,7 @@ export default function Home() {
         );
         setPlay(false);
       } else {
-        setGameDecision(
-          `Bust! You lost. Your hand: ${getStrHand(
-            updatedPlayerHand
-          )} (Total: ${handValue})`
-        );
+        setGameDecision(`Bust! You lost. Your hand Total: ${handValue}`);
         setBalance(balance - bet);
         setBust(true);
         setPlay(false);
@@ -102,21 +98,13 @@ export default function Home() {
       setBalance(balance + bet * 2);
       setPlay(false);
     } else if (playerValue > dealerValue) {
-      setGameDecision(
-        `You Win! Your Hand: ${getStrHand(
-          playerHand
-        )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
-          updatedDealerHand
-        )} Total: ${dealerValue}`
-      );
+      setGameDecision(`You Win! Your Hand Total: ${playerValue}`);
       setBalance(balance + bet * 2);
       setPlay(false);
     } else if (playerValue < dealerValue) {
       if (balance === 0) {
         setGameDecision(
           <>
-            Your hand Total: {getHandValue(playerHand)} <br />
-            Dealer hand Total: {getHandValue(dealerHand)} <br />
             You Lose! <br />
             You ran out of funds! GAME OVER! <br />
             <button
@@ -130,13 +118,7 @@ export default function Home() {
         );
         setPlay(false);
       } else {
-        setGameDecision(
-          `You Lose! Your Hand: ${getStrHand(
-            playerHand
-          )} Total: ${playerValue}, Dealer Hand: ${getStrHand(
-            updatedDealerHand
-          )} Total: ${dealerValue}`
-        );
+        setGameDecision(`You Lose! Your Hand Total: ${playerValue}`);
         setPlay(false);
       }
     } else if (dealerValue === playerValue) {
@@ -236,9 +218,9 @@ export default function Home() {
                   className="absolute bg-white text-black p-2 w-12 h-20 items-start shadow-lg rounded border border-black"
                   style={{
                     transform: `rotate(${
-                      index * 10 - dealerHand.length * 5
+                      index * 10 - dealerHand.length * 3
                     }deg)`,
-                    left: `${index * 1.5}rem`,
+                    left: `${index * 1.3}rem`,
                   }}
                 >
                   <span className="absolute top-4 right-7">
@@ -260,7 +242,7 @@ export default function Home() {
                 {/* First card: face-up (only if it exists) */}
                 {dealerHand[0] && (
                   <div
-                    className=" absolute bg-white text-black p-2 w-12 h-20 items-start rounded border border-black shadow-lg"
+                    className="animate-deal absolute bg-white text-black p-2 w-12 h-20 items-start rounded border border-black shadow-lg"
                     style={{
                       transform: `rotate(-5deg)`,
                       left: "0rem",
@@ -284,19 +266,27 @@ export default function Home() {
                 {/* Second card: back of the card (only if it exists) */}
                 {dealerHand[1] && (
                   <div
-                    className="absolute bg-blue-500 w-12 h-20 shadow-lg items-start rounded border border-black"
+                    className="animate-deal absolute bg-blue-500 w-12 h-20 shadow-lg flex justify-center items-center rounded-lg border-2 border-black border-double"
                     style={{
+                      backgroundImage: `repeating-linear-gradient(45deg, #1d4ed8 0, #1d4ed8 10px, #3b82f6 10px, #3b82f6 20px)`,
+                      backgroundSize: "cover",
                       transform: `rotate(5deg)`,
                       left: "1.5rem",
                     }}
-                  />
+                  >
+                    <div className="bg-white w-6 h-6 rounded-full border border-black flex justify-center items-center">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    </div>
+                  </div>
                 )}
               </>
             )}
           </div>
         </div>
 
-        <div className={play ? "hidden" : "font-semibold text-2xl"}>
+        <div
+          className={decision === "stand" ? "font-semibold text-xl" : "hidden"}
+        >
           Dealer Hand Total: {getHandValue(dealerHand)}
         </div>
 
@@ -305,10 +295,10 @@ export default function Home() {
             {playerHand.map((card, index) => (
               <div
                 key={`${card.getName()}-${card.value}-${card.suit}-${index}`}
-                className="absolute bg-white text-black p-2 w-12 h-20 flex flex-col items-start shadow-lg rounded border border-black"
+                className="absolute bg-white text-black p-2 w-12 h-20 flex flex-col items-start shadow-lg rounded border border-black animate-deal"
                 style={{
-                  transform: `rotate(${index * 10 - playerHand.length * 5}deg)`,
-                  left: `${index * 1.5}rem`,
+                  transform: `rotate(${index * 10 - playerHand.length * 3}deg)`,
+                  left: `${index * 1.3}rem`,
                 }}
               >
                 <span className="absolute top-4 right-7">
@@ -330,7 +320,7 @@ export default function Home() {
       </div>
 
       <div>
-        <span className="font-semibold text-2xl">
+        <span className={!play ? "hidden" : "font-semibold text-xl"}>
           Your hand total: {getHandValue(playerHand)}
         </span>
       </div>
