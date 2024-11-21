@@ -20,77 +20,6 @@ export default function Home() {
   const [play, setPlay] = useState(false);
   const [deckQuantity, setDeckQuantity] = useState(deck.getDeckQuantity());
 
-  function dealerTurn() {
-    let updatedDealerHand = [...dealerHand];
-
-    while (getHandValue(updatedDealerHand) < 17) {
-      updatedDealerHand.push(deck.deal(1)[0]);
-      setDealerHand([...updatedDealerHand]);
-
-      setDeckQuantity(deck.getDeckQuantity());
-    }
-
-    // Check the game outcome after the dealer finishes their turn
-    const dealerValue = getHandValue(updatedDealerHand);
-    const playerValue = getHandValue(playerHand);
-
-    if (dealerValue === 21) {
-      if (balance === 0) {
-        setGameDecision(
-          <>
-            Your hand Total: {getHandValue(playerHand)} <br />
-            Dealer hand Total: {getHandValue(dealerHand)} <br />
-            You Lose! <br />
-            You ran out of funds! GAME OVER! <br />
-            <button
-              className="rounded border border-black bg-slate-50 w-16"
-              onClick={resetGame}
-            >
-              Reset
-            </button>
-            the game if you like to play again!
-          </>
-        );
-        setPlay(false);
-      } else {
-        setGameDecision(`Dealer Blackjack! You Lose!`);
-        setPlay(false);
-      }
-    } else if (dealerValue > 21) {
-      setGameDecision(`Dealer Busts! You win!`);
-      setBalance(balance + bet * 2);
-      setPlay(false);
-    } else if (playerValue > dealerValue) {
-      setGameDecision(`You Win! Your Hand Total: ${playerValue}`);
-      setBalance(balance + bet * 2);
-      setPlay(false);
-    } else if (playerValue < dealerValue) {
-      if (balance === 0) {
-        setGameDecision(
-          <>
-            You Lose! <br />
-            You ran out of funds! GAME OVER! <br />
-            <button
-              className="rounded border border-black bg-slate-50 w-16"
-              onClick={resetGame}
-            >
-              Reset
-            </button>
-            the game if you like to play again!
-          </>
-        );
-        setPlay(false);
-      } else {
-        setGameDecision(`You Lose! Your Hand Total: ${playerValue}`);
-        setPlay(false);
-      }
-    } else if (dealerValue === playerValue) {
-      setGameDecision(`Push! It's a tie.`);
-      setBalance(balance + bet); // Return the bet on a tie
-      setPlay(false);
-    }
-  }
-
   function handleInputBet(event: React.ChangeEvent<HTMLInputElement>) {
     const value = event.target.value;
     if (value === "") {
@@ -152,19 +81,6 @@ export default function Home() {
     }
   }
 
-  function resetGame() {
-    setDeck(new Deck());
-    setPlayerHand([]);
-    setDealerHand([]);
-    setBet(0);
-    setBetError("");
-    setDecision("");
-    setGameDecision("");
-    setBalance(100);
-    setBust(false);
-    setPlay(false);
-  }
-
   return (
     <div className="flex flex-col gap-4 items-center justify-center">
       <div className="flex flex-col gap-2 justify-center items-center">
@@ -186,7 +102,16 @@ export default function Home() {
         {gameDecision}
       </div>
 
-      <GameButtons />
+      <GameButtons
+        dealerHand={dealerHand}
+        playerHand={playerHand}
+        decision={decision}
+        play={play}
+        setDealerHand={setDealerHand}
+        setPlayerHand={setPlayerHand}
+        setDecision={setDecision}
+        setPlay={setPlay}
+      />
       <div className={play ? "hidden" : ""}>
         <input
           type="text"

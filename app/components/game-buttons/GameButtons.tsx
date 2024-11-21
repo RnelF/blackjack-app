@@ -1,19 +1,33 @@
 import Deck from "../../deck";
 import { ICard } from "@/app/types";
 import { getHandValue } from "@/app/utils";
-import { useState } from "react";
 
-export default function GameButtons() {
-  const [decision, setDecision] = useState("");
-  const [playerHand, setPlayerHand] = useState<ICard[]>([]);
-  const [dealerHand, setDealerHand] = useState<ICard[]>([]);
-  const [gameDecision, setGameDecision] = useState<JSX.Element | string>("");
-  const [balance, setBalance] = useState(100);
-  const [bust, setBust] = useState(false);
-  const [bet, setBet] = useState<any>("");
-  const [betError, setBetError] = useState<string>("");
-  const [deck, setDeck] = useState(new Deck());
-  const [play, setPlay] = useState(false);
+interface ChildProps {
+  dealerHand: ICard[];
+  playerHand: ICard[];
+  decision: string;
+  play: boolean;
+  setDealerHand: React.Dispatch<React.SetStateAction<ICard[]>>;
+  setPlayerHand: React.Dispatch<React.SetStateAction<ICard[]>>;
+  setDecision: React.Dispatch<React.SetStateAction<string>>;
+  setPlay: React.Dispatch<React.SetStateAction<boolean>>;
+  setDeck: React.Dispatch<React.SetStateAction<Deck>>;
+  setBet: React.Dispatch<React.SetStateAction<any>>;
+  setBetError: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function GameButtons({
+  dealerHand,
+  playerHand,
+  decision,
+  play,
+  setDealerHand,
+  setPlayerHand,
+  setDecision,
+  setPlay,
+  setDeck,
+  setBet,
+}: ChildProps) {
   function resetGame() {
     setDeck(new Deck());
     setPlayerHand([]);

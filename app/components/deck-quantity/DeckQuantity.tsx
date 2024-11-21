@@ -1,8 +1,11 @@
-interface DeckQuantityProps {
+import { useState } from "react";
+import Deck from "../../deck";
+
+interface DeckProps {
   deckQuantity: number;
 }
 
-export default function DeckQuantity({ deckQuantity }: DeckQuantityProps) {
+export default function DeckQuantity({ deckQuantity }: DeckProps) {
   return (
     <>
       <div>

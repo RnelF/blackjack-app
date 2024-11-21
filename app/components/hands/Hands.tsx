@@ -1,6 +1,5 @@
 import { getHandValue, getStrHand } from "../../utils";
 import { ICard } from "../../types";
-import Deck from "../../deck";
 
 interface HandsProps {
   dealerHand: ICard[];
