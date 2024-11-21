@@ -6,14 +6,22 @@ interface ChildProps {
   dealerHand: ICard[];
   playerHand: ICard[];
   decision: string;
+  gameDecision: JSX.Element | string;
   play: boolean;
+  deck: Deck;
+  balance: number;
+  bet: any;
   setDealerHand: React.Dispatch<React.SetStateAction<ICard[]>>;
   setPlayerHand: React.Dispatch<React.SetStateAction<ICard[]>>;
   setDecision: React.Dispatch<React.SetStateAction<string>>;
   setPlay: React.Dispatch<React.SetStateAction<boolean>>;
+  setBust: React.Dispatch<React.SetStateAction<boolean>>;
   setDeck: React.Dispatch<React.SetStateAction<Deck>>;
   setBet: React.Dispatch<React.SetStateAction<any>>;
   setBetError: React.Dispatch<React.SetStateAction<string>>;
+  setGameDecision: React.Dispatch<React.SetStateAction<JSX.Element | string>>;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  setDeckQuantity: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function GameButtons({
@@ -21,12 +29,21 @@ export default function GameButtons({
   playerHand,
   decision,
   play,
+  gameDecision,
+  deck,
+  balance,
+  bet,
   setDealerHand,
   setPlayerHand,
   setDecision,
   setPlay,
   setDeck,
   setBet,
+  setBetError,
+  setGameDecision,
+  setBalance,
+  setBust,
+  setDeckQuantity,
 }: ChildProps) {
   function resetGame() {
     setDeck(new Deck());

@@ -107,11 +107,23 @@ export default function Home() {
         playerHand={playerHand}
         decision={decision}
         play={play}
+        gameDecision={gameDecision}
+        deck={deck}
+        balance={balance}
+        bet={bet}
         setDealerHand={setDealerHand}
         setPlayerHand={setPlayerHand}
         setDecision={setDecision}
         setPlay={setPlay}
+        setDeck={setDeck}
+        setBet={setBet}
+        setBetError={setBetError}
+        setGameDecision={setGameDecision}
+        setBalance={setBalance}
+        setBust={setBust}
+        setDeckQuantity={setDeckQuantity}
       />
+
       <div className={play ? "hidden" : ""}>
         <input
           type="text"
