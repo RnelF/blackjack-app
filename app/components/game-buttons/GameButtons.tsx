@@ -74,11 +74,13 @@ export default function GameButtons({
       if (balance === 0) {
         setGameDecision(
           <>
-            Busted! Hand Total: {getHandValue(updatedPlayerHand)}
+            <span className="text-2xl font-semibold">
+              Busted! Hand Total: {getHandValue(updatedPlayerHand)}
+            </span>
             <br />
             You ran out of funds! GAME OVER! <br />
             <button
-              className="rounded border border-black bg-slate-50 w-14"
+              className="rounded border border-black bg-slate-50 w-14 text-sm hover:text-white hover:bg-slate-700 duration-100"
               onClick={resetGame}
             >
               Reset
@@ -88,9 +90,14 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
-        setDeck(new Deck());
       } else {
-        setGameDecision(`Bust! You lost. Your hand Total: ${handValue}`);
+        setGameDecision(
+          <>
+            <span className="text-2xl font-semibold">
+              Bust! You lost. Your hand Total: ${handValue}
+            </span>
+          </>
+        );
         setBalance(balance - bet);
         setBust(true);
         setPlay(false);
@@ -125,7 +132,7 @@ export default function GameButtons({
             You Lose! <br />
             You ran out of funds! GAME OVER! <br />
             <button
-              className="rounded border border-black bg-slate-50 w-16"
+              className="rounded border border-black bg-slate-50 w-16 text-sm hover:text-white hover:bg-slate-700 duration-100"
               onClick={resetGame}
             >
               Reset
@@ -135,27 +142,49 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
-        setDeck(new Deck());
       } else {
-        setGameDecision(`Dealer Blackjack! You Lose!`);
+        setGameDecision(
+          <>
+            <span className="text-2xl font-semibold">
+              Dealer Blackjack! You Lose!
+            </span>
+          </>
+        );
         setPlay(false);
       }
     } else if (dealerValue > 21) {
-      setGameDecision(`Dealer Busts! You win!`);
+      setGameDecision(
+        <>
+          <span className="text-2xl font-semibold">Dealer Busts! You win!</span>
+        </>
+      );
       setBalance(balance + bet * 2);
       setPlay(false);
     } else if (playerValue > dealerValue) {
-      setGameDecision(`You Win! Your Hand Total: ${playerValue}`);
+      setGameDecision(
+        <>
+          <span className="text-2xl font-semibold">
+            You Win! Your Hand Total: {playerValue}
+          </span>
+        </>
+      );
       setBalance(balance + bet * 2);
       setPlay(false);
     } else if (playerValue < dealerValue) {
       if (balance === 0) {
         setGameDecision(
           <>
-            You Lose! <br />
+            <span className="text-2xl font-semibold">
+              You Lose! Your Hand Total: {playerValue}
+            </span>{" "}
+            <br />
+            <span className="text-2xl font-semibold">
+              Dealer Hand Total: {dealerValue}
+            </span>{" "}
+            <br />
             You ran out of funds! GAME OVER! <br />
             <button
-              className="rounded border border-black bg-slate-50 w-16"
+              className="rounded border border-black bg-slate-50 w-16  text-sm hover:text-white hover:bg-slate-700 duration-100"
               onClick={resetGame}
             >
               Reset
@@ -165,13 +194,22 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
-        setDeck(new Deck());
       } else {
-        setGameDecision(`You Lose! Your Hand Total: ${playerValue}`);
+        setGameDecision(
+          <>
+            <span className="text-2xl font-semibold">
+              You Lose! Your Hand Total: {playerValue}
+            </span>
+          </>
+        );
         setPlay(false);
       }
     } else if (dealerValue === playerValue) {
-      setGameDecision(`Push! It's a tie.`);
+      setGameDecision(
+        <>
+          <span className="text-2xl font-semibold">Push! It's a tie.</span>
+        </>
+      );
       setBalance(balance + bet); // Return the bet on a tie
       setPlay(false);
     }

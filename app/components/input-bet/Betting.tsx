@@ -116,7 +116,7 @@ export default function Betting({
           <button
             onClick={handleSubmitBet}
             disabled={play}
-            className="border border-black bg-slate-50 rounded-md w-24 ml-3 font-semibold"
+            className="border border-black bg-slate-50 rounded-md w-24 ml-3 font-semibold hover:text-white hover:bg-slate-700 duration-100"
           >
             Place Bet
           </button>
