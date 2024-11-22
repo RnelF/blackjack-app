@@ -19,6 +19,7 @@ interface BettingProps {
   setPlay: React.Dispatch<React.SetStateAction<boolean>>;
   setBust: React.Dispatch<React.SetStateAction<boolean>>;
   setGameDecision: React.Dispatch<React.SetStateAction<JSX.Element | string>>;
+  setInitialPlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Betting({
@@ -36,6 +37,7 @@ export default function Betting({
   setBust,
   setPlay,
   setGameDecision,
+  setInitialPlay,
   play,
   betError,
 }: BettingProps) {
@@ -89,6 +91,7 @@ export default function Betting({
     setDecision("");
     setBust(false);
     setPlay(true);
+    setInitialPlay(true);
 
     // Check for immediate Blackjack for player
     const playerHandValue = getHandValue(playerStartingHand);

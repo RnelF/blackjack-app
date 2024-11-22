@@ -19,6 +19,7 @@ export default function Home() {
   const [deck, setDeck] = useState(new Deck());
   const [play, setPlay] = useState(false);
   const [deckQuantity, setDeckQuantity] = useState(deck.getDeckQuantity());
+  const [initialPlay, setInitialPlay] = useState(true);
 
   return (
     <div className="flex flex-col gap-4 items-center justify-center">
@@ -61,6 +62,7 @@ export default function Home() {
         setBalance={setBalance}
         setBust={setBust}
         setDeckQuantity={setDeckQuantity}
+        setInitialPlay={setInitialPlay}
       />
 
       <Betting
@@ -80,6 +82,7 @@ export default function Home() {
         setBalance={setBalance}
         setBust={setBust}
         setDeckQuantity={setDeckQuantity}
+        setInitialPlay={setInitialPlay}
       />
       <div>
         <p>Current Balance: {balance}</p>

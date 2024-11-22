@@ -22,6 +22,7 @@ interface ChildProps {
   setGameDecision: React.Dispatch<React.SetStateAction<JSX.Element | string>>;
   setBalance: React.Dispatch<React.SetStateAction<number>>;
   setDeckQuantity: React.Dispatch<React.SetStateAction<number>>;
+  setInitialPlay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function GameButtons({
@@ -44,6 +45,7 @@ export default function GameButtons({
   setBalance,
   setBust,
   setDeckQuantity,
+  setInitialPlay,
 }: ChildProps) {
   function resetGame() {
     setDeck(new Deck());
@@ -85,6 +87,7 @@ export default function GameButtons({
           </>
         );
         setPlay(false);
+        setInitialPlay(false);
       } else {
         setGameDecision(`Bust! You lost. Your hand Total: ${handValue}`);
         setBalance(balance - bet);
@@ -130,6 +133,7 @@ export default function GameButtons({
           </>
         );
         setPlay(false);
+        setInitialPlay(false);
       } else {
         setGameDecision(`Dealer Blackjack! You Lose!`);
         setPlay(false);
@@ -158,6 +162,7 @@ export default function GameButtons({
           </>
         );
         setPlay(false);
+        setInitialPlay(false);
       } else {
         setGameDecision(`You Lose! Your Hand Total: ${playerValue}`);
         setPlay(false);
