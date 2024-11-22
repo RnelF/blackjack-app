@@ -105,7 +105,7 @@ export default function Betting({
 
   return (
     <>
-      <div>
+      <div className="mt-10">
         <div className={play ? "hidden" : ""}>
           <input
             type="text"

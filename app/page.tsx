@@ -22,7 +22,7 @@ export default function Home() {
   const [initialPlay, setInitialPlay] = useState(true);
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center">
+    <div className="flex flex-col gap-2 items-center justify-center">
       <div className="flex flex-col gap-2 justify-center items-center">
         <div>
           <h1 className="text-4xl font-semibold">Blackjack</h1>

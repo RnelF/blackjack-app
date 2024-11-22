@@ -5,7 +5,7 @@ interface DeckProps {
 export default function DeckQuantity({ deckQuantity }: DeckProps) {
   return (
     <>
-      <div>
+      <div className="mr-12">
         <div
           className="absolute bg-blue-500 w-9 h-14 shadow-lg flex justify-center items-center rounded border-2 border-black border-double"
           style={{

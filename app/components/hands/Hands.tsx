@@ -14,7 +14,7 @@ export default function Hands({
   play,
 }: HandsProps) {
   return (
-    <>
+    <div className="mr-20">
       {play ? (
         <div className="mb-16 mt-20 flex flex-col items-center justify-center gap-20">
           <div>
@@ -104,7 +104,7 @@ export default function Hands({
           </div>
 
           <div>
-            <div className="relative inline-block">
+            <div className="relative inline-block my-10">
               {playerHand.map((card, index) => (
                 <div
                   key={`${card.getName()}-${card.value}-${card.suit}-${index}`}
@@ -136,17 +136,22 @@ export default function Hands({
               ))}
             </div>
           </div>
+
           <div>
-            <span className={!play ? "hidden" : "font-semibold text-xl"}>
+            <span className={!play ? "hidden" : "font-semibold text-xl ml-20"}>
               Your hand total: {getHandValue(playerHand)}
             </span>
           </div>
         </div>
       ) : (
-        <div className="my-40">
-          <h1>Place Your Bet to start the Game</h1>
+        <div className="w-96 h-72 ml-16 border border-black rounded-md mt-16 flex justify-center items-center">
+          <div>
+            <h1 className="font-semibold text-2xl ">
+              Place Your Bet to start the Game
+            </h1>
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

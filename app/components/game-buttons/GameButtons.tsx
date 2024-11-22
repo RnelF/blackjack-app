@@ -88,6 +88,7 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
+        setDeck(new Deck());
       } else {
         setGameDecision(`Bust! You lost. Your hand Total: ${handValue}`);
         setBalance(balance - bet);
@@ -134,6 +135,7 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
+        setDeck(new Deck());
       } else {
         setGameDecision(`Dealer Blackjack! You Lose!`);
         setPlay(false);
@@ -163,6 +165,7 @@ export default function GameButtons({
         );
         setPlay(false);
         setInitialPlay(false);
+        setDeck(new Deck());
       } else {
         setGameDecision(`You Lose! Your Hand Total: ${playerValue}`);
         setPlay(false);
@@ -174,8 +177,8 @@ export default function GameButtons({
     }
   }
   return (
-    <>
-      <div className={!play ? "hidden" : "flex gap-4"}>
+    <div className="-mt-10">
+      <div className={!play ? "hidden" : "flex gap-3"}>
         <button
           onClick={() => {
             playerHit();
@@ -197,6 +200,6 @@ export default function GameButtons({
           Stand
         </button>
       </div>
-    </>
+    </div>
   );
 }
